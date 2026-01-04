@@ -6,14 +6,19 @@ import net.neoforged.gradle.dsl.common.runs.run.Run;
 import net.neoforged.gradle.dsl.common.runs.run.RunManager;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 public class ProjectPlugin implements Plugin<Project> {
 
-    private static final String RENDER_PROPERTY = "item_asset_export.render.namespaces";
-    private static final String OUTPUT_PROPERTY = "item_asset_export.render.output";
-    private static final String ANIMATED_PROPERTY = "item_asset_export.render.outputs.gif";
+    private static final String ENABLED_PROPERTY = "wiki_exporter.enabled";
+
+    private static final String OUTPUT_PROPERTY = "wiki_exporter.output.path";
+
+    private static final String CONFIG_PROPERTY = "wiki_exporter.config.path";
 
     @Override
     public void apply(@NotNull Project project) {
@@ -39,15 +44,15 @@ public class ProjectPlugin implements Plugin<Project> {
 
             project.getConfigurations().getByName(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME)
                             .getDependencies().addLater(extension.getSinytraExporterVersion()
-                            .map("org.sinytra:item-asset-export-neoforge:%s"::formatted)
+                            .map("org.sinytra:wiki-exporter-neoforge:%s"::formatted)
                             .map(project.getDependencies()::create));
 
             run.getSystemProperties()
                     .put(OUTPUT_PROPERTY, run.getWorkingDirectory().map(directory -> directory.dir("output").getAsFile().getAbsolutePath()));
             run.getSystemProperties()
-                    .put(RENDER_PROPERTY, extension.getExportedNamespaces().map(namespaces -> String.join(",", namespaces)));
+                    .put(CONFIG_PROPERTY, extension.getConfigFile().map(RegularFile::getAsFile).map(File::getAbsolutePath));
             run.getSystemProperties()
-                    .put(ANIMATED_PROPERTY, "true");
+                    .put(ENABLED_PROPERTY, "true");
         });
     }
 }

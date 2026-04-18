@@ -1,5 +1,5 @@
 [versions]
-neogradle = "7.1.20"
+neogradle = "7.1.22"
 
 [libraries]
 neogradle-userdev = { module = "net.neoforged.gradle:userdev", version.ref = "neogradle" }
